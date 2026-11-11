@@ -15,6 +15,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        // Built-in FluentValidation messages in Spanish (custom ones are already written in Spanish).
+        ValidatorOptions.Global.LanguageManager.Culture = new System.Globalization.CultureInfo("es");
         services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>(includeInternalTypes: true);
 
         services.AddScoped<AuthService>();

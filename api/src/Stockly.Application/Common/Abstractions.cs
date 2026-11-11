@@ -63,6 +63,9 @@ public interface IBusinessClock
     DateTime UtcNow { get; }
     DateOnly Today { get; }
     DateOnly ToBusinessDate(DateTime utc);
+
+    /// <summary>UTC instant at which the given business day starts (00:00 local).</summary>
+    DateTime StartOfDayUtc(DateOnly date);
 }
 
 public interface IPasswordHasher

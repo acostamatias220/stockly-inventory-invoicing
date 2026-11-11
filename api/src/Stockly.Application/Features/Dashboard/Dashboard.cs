@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Stockly.Application.Common;
 using Stockly.Application.Features.Products;
+using Stockly.Domain.Common;
 using Stockly.Domain.Enums;
 
 namespace Stockly.Application.Features.Dashboard;
@@ -51,14 +52,14 @@ public sealed class DashboardService(IAppDbContext db, ProductService products, 
         var topProducts = await db.InvoiceLines.AsNoTracking()
             .Where(l => db.Invoices.Any(i => i.Id == l.InvoiceId && Billed.Contains(i.Status) && i.IssueDate >= from))
             .GroupBy(l => new { l.ProductId, l.Sku, l.Description })
-            .Select(g => new TopProductDto(g.Key.ProductId, g.Key.Sku, g.Key.Description, g.Sum(l => l.Quantity), g.Sum(l => l.NetAmount)))
+            .Select(g => new { g.Key.ProductId, g.Key.Sku, g.Key.Description, Quantity = g.Sum(l => l.Quantity), Revenue = g.Sum(l => l.NetAmount) })
             .OrderByDescending(p => p.Revenue)
             .Take(7)
             .ToListAsync(ct);
 
         var stockByCategory = await db.StockLevels.AsNoTracking()
             .GroupBy(s => new { s.Product.CategoryId, s.Product.Category.Name, s.Product.Category.Color })
-            .Select(g => new CategoryStockDto(g.Key.CategoryId, g.Key.Name, g.Key.Color, g.Sum(s => s.Quantity), g.Sum(s => s.Quantity * s.Product.Cost)))
+            .Select(g => new { g.Key.CategoryId, g.Key.Name, g.Key.Color, Units = g.Sum(s => s.Quantity), Value = g.Sum(s => s.Quantity * s.Product.Cost) })
             .Where(c => c.Units > 0)
             .OrderByDescending(c => c.Value)
             .ToListAsync(ct);
@@ -74,8 +75,13 @@ public sealed class DashboardService(IAppDbContext db, ProductService products, 
 
         var kpis = new DashboardKpisDto(
             monthSales, previousSales, monthCount, receivables, overdue,
-            stockByCategory.Sum(c => c.Value), lowStockCount, activeProducts);
+            Money.Round(stockByCategory.Sum(c => c.Value)), lowStockCount, activeProducts);
 
-        return new DashboardDto(kpis, salesByDay, topProducts, stockByCategory, lowStock);
+        return new DashboardDto(
+            kpis,
+            salesByDay,
+            topProducts.Select(p => new TopProductDto(p.ProductId, p.Sku, p.Description, p.Quantity, p.Revenue)).ToList(),
+            stockByCategory.Select(c => new CategoryStockDto(c.CategoryId, c.Name, c.Color, c.Units, Money.Round(c.Value))).ToList(),
+            lowStock);
     }
 }

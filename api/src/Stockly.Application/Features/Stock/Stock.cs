@@ -249,13 +249,13 @@ public sealed class StockService(IAppDbContext db, IStockStore store, IBusinessC
 
         if (query.From is not null)
         {
-            var from = query.From.Value.ToDateTime(TimeOnly.MinValue);
+            var from = clock.StartOfDayUtc(query.From.Value);
             movements = movements.Where(m => m.CreatedAt >= from);
         }
 
         if (query.To is not null)
         {
-            var to = query.To.Value.AddDays(1).ToDateTime(TimeOnly.MinValue);
+            var to = clock.StartOfDayUtc(query.To.Value.AddDays(1));
             movements = movements.Where(m => m.CreatedAt < to);
         }
 
