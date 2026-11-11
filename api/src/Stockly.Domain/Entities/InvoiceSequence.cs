@@ -10,10 +10,11 @@ public class InvoiceSequence
 {
     private InvoiceSequence() { }
 
-    public InvoiceSequence(InvoiceLetter letter, int pointOfSale)
+    public InvoiceSequence(InvoiceLetter letter, int pointOfSale, long lastNumber = 0)
     {
         Letter = letter;
         PointOfSale = pointOfSale;
+        LastNumber = lastNumber;
     }
 
     public InvoiceLetter Letter { get; private set; }
