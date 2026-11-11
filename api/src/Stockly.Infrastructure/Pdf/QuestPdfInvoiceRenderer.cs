@@ -14,7 +14,7 @@ public sealed class CompanyOptions
     public const string Section = "Company";
 
     public string Name { get; set; } = "Stockly Distribuidora S.R.L.";
-    public string TaxId { get; set; } = "30-71234567-8";
+    public string TaxId { get; set; } = "30-71234567-1";
     public string TaxCondition { get; set; } = "IVA Responsable Inscripto";
     public string Address { get; set; } = "Av. Corrientes 1234, CABA";
     public string? Email { get; set; } = "ventas@stockly.example";
