@@ -1,0 +1,12 @@
+.letter-box { width: 64px; height: 64px; border: 2px solid var(--text); border-radius: 10px; display: grid; place-items: center; font-size: 34px; font-weight: 800; }
+.lines td { vertical-align: top; }
+.lines select { min-width: 260px; }
+.col-product { width: 40%; }
+.summary { display: flex; justify-content: flex-end; gap: 20px; align-items: flex-end; flex-wrap: wrap; }
+.totals { min-width: 320px; margin: 0; display: grid; gap: 6px; }
+.totals div { display: flex; justify-content: space-between; }
+.totals dt { color: var(--muted); }
+.totals dd { margin: 0; font-variant-numeric: tabular-nums; }
+.totals .grand { border-top: 1px solid var(--border); padding-top: 8px; font-size: 1.25rem; font-weight: 700; }
+.totals .grand dt { color: var(--text); }
+.summary-actions { display: flex; gap: 10px; }
