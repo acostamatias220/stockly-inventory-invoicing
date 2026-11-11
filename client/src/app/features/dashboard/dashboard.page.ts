@@ -37,8 +37,8 @@ const dayLabel = new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: 'shor
         <article class="card kpi">
           <span class="kpi-label">Ventas del mes</span>
           <strong class="kpi-value">{{ d.kpis.salesThisMonth | ars: 'compact' }}</strong>
-          <span class="kpi-trend" [class.up]="trend() >= 0" [class.down]="trend() < 0">
-            {{ trend() >= 0 ? '▲' : '▼' }} {{ trend() | number: '1.0-1' }}% vs. mes anterior
+          <span class="kpi-trend" [class.up]="trend() >= 0" [class.down]="trend() < 0" title="Mes en curso contra los mismos días del mes anterior">
+            {{ trend() >= 0 ? '▲' : '▼' }} {{ trend() | number: '1.0-1' }}% vs. mismo período
           </span>
         </article>
         <article class="card kpi">

@@ -83,7 +83,7 @@ type ManualType = (typeof MANUAL_TYPES)[number];
               <tr>
                 <td class="nowrap">{{ m.createdAt | date: 'dd/MM/yy HH:mm' }}</td>
                 <td><span class="badge" [class]="'badge badge-mov-' + m.type.toLowerCase()">{{ labels[m.type] }}</span></td>
-                <td><a [routerLink]="['/productos', m.productId]">{{ m.productName }}</a> <code class="muted">{{ m.sku }}</code></td>
+                <td><a [routerLink]="['/productos', m.productId]">{{ m.productName }}</a><span class="cell-sub mono muted">{{ m.sku }}</span></td>
                 <td>{{ m.warehouseCode }}</td>
                 <td class="num" [class.success]="m.quantity > 0" [class.danger]="m.quantity < 0">{{ m.quantity > 0 ? '+' : '' }}{{ m.quantity }}</td>
                 <td class="num">{{ m.balanceAfter }}</td>
@@ -95,7 +95,7 @@ type ManualType = (typeof MANUAL_TYPES)[number];
                   }
                   @if (m.supplierName) { <span class="muted"> · {{ m.supplierName }}</span> }
                 </td>
-                <td>{{ m.userName }}</td>
+                <td class="nowrap">{{ m.userName }}</td>
               </tr>
             } @empty {
               <tr><td colspan="8" class="empty">Sin movimientos para los filtros elegidos.</td></tr>

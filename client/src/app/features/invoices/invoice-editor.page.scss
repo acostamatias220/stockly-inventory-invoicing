@@ -1,6 +1,7 @@
 .letter-box { width: 64px; height: 64px; border: 2px solid var(--text); border-radius: 10px; display: grid; place-items: center; font-size: 34px; font-weight: 800; }
 .lines td { vertical-align: top; }
-.lines select { min-width: 260px; }
+.lines select { width: 100%; min-width: 200px; text-overflow: ellipsis; }
+.table-wrap { min-width: 0; }
 .col-product { width: 40%; }
 .summary { display: flex; justify-content: flex-end; gap: 20px; align-items: flex-end; flex-wrap: wrap; }
 .totals { min-width: 320px; margin: 0; display: grid; gap: 6px; }
