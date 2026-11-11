@@ -1,0 +1,51 @@
+# Stockly: MySQL + API (.NET) + client (nginx). Copy .env.example to .env and fill in the secrets first.
+name: stockly
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-stockly}
+      MYSQL_USER: ${MYSQL_USER:-stockly}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Definí MYSQL_PASSWORD en .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Definí MYSQL_ROOT_PASSWORD en .env}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: "Server=mysql;Port=3306;Database=${MYSQL_DATABASE:-stockly};User=${MYSQL_USER:-stockly};Password=${MYSQL_PASSWORD}"
+      Jwt__Key: ${JWT_KEY:?Definí JWT_KEY en .env (mínimo 32 caracteres)}
+      Seed__Enabled: ${SEED_ENABLED:-true}
+      Seed__DemoPassword: ${SEED_DEMO_PASSWORD:-}
+      Swagger__Enabled: ${SWAGGER_ENABLED:-false}
+      ReverseProxy__Enabled: "true"
+      Cors__Origins__0: ${PUBLIC_URL:-http://localhost:8080}
+    # Not published on purpose: the only entry point is nginx (see client/nginx.conf)
+    expose:
+      - "8080"
+
+  client:
+    build: ./client
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${CLIENT_PORT:-8080}:80"
+
+volumes:
+  mysql-data:
