@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -76,6 +77,19 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
     .AllowAnyMethod()
     .WithExposedHeaders("Content-Disposition")));
 
+// ---- Behind a reverse proxy (nginx in docker compose): trust X-Forwarded-* so rate limiting sees the
+// real client IP. Only enable it when the API is reachable exclusively through the proxy.
+var behindProxy = config.GetValue<bool>("ReverseProxy:Enabled");
+if (behindProxy)
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
+}
+
 // ---- OpenAPI / Swagger ----------------------------------------------------------------------
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -105,6 +119,11 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+if (behindProxy)
+{
+    app.UseForwardedHeaders();
+}
 
 app.UseExceptionHandler();
 app.Use(async (context, next) =>

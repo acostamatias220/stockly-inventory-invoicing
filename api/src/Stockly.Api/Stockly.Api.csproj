@@ -15,6 +15,10 @@
     <ProjectReference Include="..\Stockly.Infrastructure\Stockly.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Template only: never shipped with the app -->
+    <Content Update="appsettings.Development.example.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Stockly.IntegrationTests" />
   </ItemGroup>
 </Project>
