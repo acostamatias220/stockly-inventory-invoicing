@@ -45,7 +45,9 @@ public sealed class DbSeeder(AppDbContext db, IPasswordHasher hasher, IBusinessC
         }
 
         var now = clock.UtcNow;
-        var start = now.Date.AddDays(-95);
+        // Days are anchored to the business time zone so "09:00" means 09:00 in Buenos Aires.
+        var start = clock.StartOfDayUtc(clock.Today.AddDays(-95));
+        var todayStart = clock.StartOfDayUtc(clock.Today);
 
         await using var tx = await db.Database.BeginTransactionAsync(ct);
 
@@ -165,9 +167,9 @@ public sealed class DbSeeder(AppDbContext db, IPasswordHasher hasher, IBusinessC
         for (var day = 4; day <= 95; day++)
         {
             var date = start.AddDays(day);
-            if (date > now)
+            if (date >= todayStart)
             {
-                break;
+                break; // history ends yesterday: nothing is dated in the future and the audit trail stays chronological
             }
 
             if (date.DayOfWeek is DayOfWeek.Sunday)
@@ -221,7 +223,7 @@ public sealed class DbSeeder(AppDbContext db, IPasswordHasher hasher, IBusinessC
                 var balance = Balance(product, warehouse);
                 if (balance > 1)
                 {
-                    Move(product, warehouse, -(balance - 1), StockMovementType.Salida, deposito.Id, now.AddHours(-30), "Entrega para uso interno / muestras", null, null);
+                    Move(product, warehouse, -(balance - 1), StockMovementType.Salida, deposito.Id, now.AddMinutes(-90), "Entrega para uso interno / muestras", null, null);
                 }
             }
         }

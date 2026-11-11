@@ -35,6 +35,8 @@ public sealed class DashboardService(IAppDbContext db, ProductService products, 
         var from = today.AddDays(-(days - 1));
         var monthStart = new DateOnly(today.Year, today.Month, 1);
         var previousMonthStart = monthStart.AddMonths(-1);
+        // Month-to-date vs. the same number of days of the previous month (a fair comparison on day 11).
+        var previousPeriodEnd = previousMonthStart.AddDays(Math.Min(today.Day, DateTime.DaysInMonth(previousMonthStart.Year, previousMonthStart.Month)));
 
         var billed = db.Invoices.AsNoTracking().Where(i => Billed.Contains(i.Status));
 
@@ -65,7 +67,7 @@ public sealed class DashboardService(IAppDbContext db, ProductService products, 
             .ToListAsync(ct);
 
         var monthSales = await billed.Where(i => i.IssueDate >= monthStart).SumAsync(i => (decimal?)i.Total, ct) ?? 0;
-        var previousSales = await billed.Where(i => i.IssueDate >= previousMonthStart && i.IssueDate < monthStart).SumAsync(i => (decimal?)i.Total, ct) ?? 0;
+        var previousSales = await billed.Where(i => i.IssueDate >= previousMonthStart && i.IssueDate < previousPeriodEnd).SumAsync(i => (decimal?)i.Total, ct) ?? 0;
         var monthCount = await billed.CountAsync(i => i.IssueDate >= monthStart, ct);
         var receivables = await db.Invoices.Where(i => i.Status == InvoiceStatus.Issued).SumAsync(i => (decimal?)i.Total, ct) ?? 0;
         var overdue = await db.Invoices.CountAsync(i => i.Status == InvoiceStatus.Issued && i.DueDate < today, ct);
