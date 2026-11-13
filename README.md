@@ -14,7 +14,7 @@ Sistema **fullstack** de inventario multi-depósito y facturación para una dist
 
 ---
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 - **Productos y categorías**: SKU único, precio neto, costo, alícuota de IVA, proveedor, **stock por depósito** y **alerta de stock mínimo** (con listado dedicado y KPI en el dashboard).
 - **Movimientos de stock** (entrada, salida, transferencia entre depósitos y ajuste por conteo) con **auditoría completa**: quién, cuándo, motivo, referencia y saldo resultante. Las transferencias quedan vinculadas por un `correlation_id`.
@@ -29,7 +29,7 @@ Sistema **fullstack** de inventario multi-depósito y facturación para una dist
 - **Roles** `admin`, `vendedor` y `deposito` aplicados en la API (políticas) y reflejados en la UI (guards y menú).
 - **Seguridad**: JWT firmado con HMAC-SHA256, contraseñas con PBKDF2 (`PasswordHasher` de ASP.NET Identity), _rate limiting_ en login, `ProblemDetails` para errores, CORS restringido, cabeceras de seguridad y CSP estricta en nginx.
 
-## 🧱 Stack
+##  Stack
 
 | Capa          | Tecnologías                                                                                                  |
 | ------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -39,7 +39,7 @@ Sistema **fullstack** de inventario multi-depósito y facturación para una dist
 | Testing       | xUnit + FluentAssertions, `WebApplicationFactory` contra MySQL real (o Testcontainers), Vitest para Angular |
 | DevOps        | Docker multi-stage, docker compose, nginx (SPA + proxy `/api`), GitHub Actions                               |
 
-## 🏗️ Arquitectura
+##  Arquitectura
 
 ```mermaid
 flowchart LR
@@ -147,7 +147,7 @@ erDiagram
 - **Ordenamiento seguro**: el parámetro `sort` se resuelve contra una _whitelist_ (`SortMap`) por entidad; nunca se arma SQL con texto del usuario. El tamaño de página está acotado.
 - **Gráficos SVG sin librerías**: funciones puras (`linearScale`, `niceTicks`, `donutSegment`, `pieAngles`) testeadas por separado, y componentes que solo calculan geometría con `computed()` de signals.
 
-## 📁 Estructura
+##  Estructura
 
 ```
 stockly/
@@ -174,7 +174,7 @@ stockly/
 └── .github/workflows/ci.yml
 ```
 
-## 🚀 Cómo correrlo
+##  Cómo correrlo
 
 ### Requisitos
 
@@ -228,7 +228,7 @@ docker compose up --build
 - App: http://localhost:8080 (nginx sirve la SPA y hace proxy de `/api`)
 - La API no se publica al host: el único punto de entrada es nginx.
 
-## 🧪 Tests
+##  Tests
 
 ```bash
 # Backend: unitarios + integración
@@ -252,7 +252,7 @@ npm run build
 
 Los tests de integración crean una base temporal `stockly_it_*`, levantan la API real con `WebApplicationFactory` y la borran al terminar.
 
-## 🔐 Variables de entorno
+##  Variables de entorno
 
 ### API (`appsettings`, user-secrets o variables de entorno)
 
@@ -314,7 +314,7 @@ Errores en formato **RFC 7807** (`application/problem+json`): `400` validación 
 | Anular factura **emitida** (devuelve stock) | ✅ | — | — |
 | Depósitos y usuarios                | ✅ | — | — |
 
-## 🖼️ Capturas
+##  Capturas
 
 | Productos con alertas de stock                 | Auditoría de movimientos                               |
 | ---------------------------------------------- | ------------------------------------------------------ |
@@ -332,13 +332,13 @@ Errores en formato **RFC 7807** (`application/problem+json`): `400` validación 
 | ---------------------------------------- | ----------------------------------------------- |
 | ![Login](docs/screenshots/login.png)     | ![Configuración](docs/screenshots/settings.png) |
 
-## 🗺️ Próximos pasos
+##  Próximos pasos
 
 - Notas de crédito para anular facturas ya cobradas.
 - Integración con los web services de AFIP/ARCA (CAE) para facturación electrónica real.
 - Refresh tokens con rotación y cookie `httpOnly`.
 - Tests end-to-end con Playwright.
 
-## 📄 Licencia
+##  Licencia
 
 MIT © Matías Acosta
